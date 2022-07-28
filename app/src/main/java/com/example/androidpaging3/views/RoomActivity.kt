@@ -9,25 +9,27 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.room.Room
 import com.example.androidpaging3.R
 import com.example.androidpaging3.data.RoomAdapter
 import com.example.androidpaging3.databases.AppDatabase
 import com.example.androidpaging3.databinding.ActivityRoomBinding
 import com.example.androidpaging3.models.StoredObject
-import com.example.androidpaging3.viewmodels.MainViewModel
+import com.example.androidpaging3.viewmodels.RoomViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
+/**
+ * https://github.com/romychab/android-tutorials
+ * */
 
 private const val TAG = "RoomActivity"
 
 class RoomActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityRoomBinding
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
+    private val viewModel: RoomViewModel by lazy {
+        ViewModelProvider(this)[RoomViewModel::class.java]
     }
     private val roomAdapter = RoomAdapter()
 
@@ -49,20 +51,20 @@ class RoomActivity : AppCompatActivity() {
     }
 
     private fun prePopDB() {
-        val dao = Room.databaseBuilder(this, AppDatabase::class.java, "myDB")
-            .build()
-            .storedObjectDao()
-        lifecycleScope.launch(Dispatchers.IO) {
-            for (i in 0..100) {
-                val result = dao.insert(StoredObject(_id = 0, name = "name $i"))
-                Log.e(TAG, "prePopDB: $result")
+        val dao = AppDatabase.getAppDbInstance(this).storedObjectDao()
+        if (dao.getAllPaged().isEmpty()) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                for (i in 0..100) {
+                    val result = dao.insert(StoredObject(_id = 0, name = "name $i"))
+                    Log.e(TAG, "prePopDB: $result")
+                }
             }
         }
     }
 
     private fun observableData() {
         lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.itemsRoom.collectLatest {
+            viewModel.usersFlow.collectLatest {
                 roomAdapter.submitData(it)
             }
         }
