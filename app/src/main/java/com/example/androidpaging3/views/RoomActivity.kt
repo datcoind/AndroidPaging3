@@ -54,7 +54,7 @@ class RoomActivity : AppCompatActivity() {
         val dao = AppDatabase.getAppDbInstance(this).storedObjectDao()
         if (dao.getAllPaged().isEmpty()) {
             lifecycleScope.launch(Dispatchers.IO) {
-                for (i in 0..100) {
+                for (i in 0..500) {
                     val result = dao.insert(StoredObject(_id = 0, name = "name $i"))
                     Log.e(TAG, "prePopDB: $result")
                 }
