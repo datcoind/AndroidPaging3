@@ -60,7 +60,7 @@ class FileUtils {
             } else {
                 val sortOrder =
                     MediaStore.MediaColumns.DATE_MODIFIED + " DESC LIMIT $limitPhotoLoadMore OFFSET ${offset * limitPhotoLoadMore}"
-
+                Log.e(TAG, "getAllPhotoFromDevice: " + limitPhotoLoadMore + " - " + (offset * limitPhotoLoadMore) )
                 context.contentResolver.query(uri, projection, null, null, sortOrder)
 
             }?.use { cursor: Cursor ->

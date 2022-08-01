@@ -13,8 +13,7 @@ import com.example.androidpaging3.R
 import com.example.androidpaging3.data.PhotoAdapter
 import com.example.androidpaging3.databinding.ActivityMainBinding
 import com.example.androidpaging3.viewmodels.MainViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this)[MainViewModel::class.java]
     }
     private var photoAdapter = PhotoAdapter()
-    private var coroutineJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +46,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observableData() {
-        coroutineJob?.cancel()
-        coroutineJob = lifecycleScope.launch {
-            viewModel.photos.collectLatest {
-                delay(2000)
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.photosFlow.collectLatest {
                 photoAdapter.submitData(it)
             }
         }
