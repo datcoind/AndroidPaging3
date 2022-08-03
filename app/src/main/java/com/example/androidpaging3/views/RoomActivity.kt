@@ -70,6 +70,7 @@ class RoomActivity : AppCompatActivity() {
         }
         roomAdapter.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) {
+                // thêm dữ liệu thì hiển thị progress
                 showProgressBar(true)
             } else {
                 showProgressBar(false)

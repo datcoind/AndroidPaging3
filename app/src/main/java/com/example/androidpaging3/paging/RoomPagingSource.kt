@@ -10,6 +10,7 @@ private const val NOTE_STARTING_PAGE_INDEX = 1
 
 typealias RoomPageLoaded = suspend (pageIndex: Int, pageSize: Int) -> List<StoredObject>
 
+// class dùng để load dữ liệu.
 class RoomPagingSource(
     private val loader: RoomPageLoaded,
     private val pageSize: Int
@@ -17,12 +18,14 @@ class RoomPagingSource(
     PagingSource<Int, StoredObject>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StoredObject> {
+        // LoadParams dùng để dùng để lấy các key và pageSize
         // get the index of page to be loaded (it may be NULL, in this case let's load the first page with index = 0)
         val pageIndex = params.key ?: 0
-        Log.e(TAG, "load: " + pageIndex + " - " + params.loadSize )
+        Log.e(TAG, "load: " + pageIndex + " - " + params.loadSize)
         return try {
             // loading the desired page of users
             val users = loader.invoke(pageIndex, params.loadSize)
+            // nếu lấy thành công nó sẽ trả về 1 thằng LoadResult. LoadResult chứa dữ liệu đã tìm được, key trước đó và key tiếp theo
             // success! now we can return LoadResult.Page
             return LoadResult.Page(
                 data = users,
@@ -48,5 +51,11 @@ class RoomPagingSource(
         // page doesn't have 'currentKey' property, so need to calculate it manually:
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
+    /**  getRefreshKey() method này lấy một đối tượng PagingState làm tham số và trả về key để truyền vào phương thức load()
+     * khi dữ liệu được làm mới hoặc mất hiệu lực sau lần tải đầu tiên.
+    Paging Library sẽ tự động gọi phương thức này các lần làm mới dữ liệu tiếp theo.
+
+    - Phương thức này được gọi khi Thư viện phân trang cần tải lại các mục cho giao diện người dùng vì dữ liệu trong phương thức sao lưu PagingSource đã thay đổi.
+     */
 
 }

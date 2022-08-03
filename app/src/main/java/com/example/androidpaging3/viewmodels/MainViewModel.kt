@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 
 private const val TAG = "MainViewModel"
-private const val PAGE_SIZE = 20
+private const val PAGE_SIZE = 30
 
 class MainViewModel : ViewModel() {
 
@@ -56,7 +56,7 @@ class MainViewModel : ViewModel() {
         val offset = pageIndex * pageSize
 
         // get page
-        val list = FileUtils.getAllPhotoFromDevice(GlobalApp.context, pageIndex, pageSize)
+        val list = FileUtils.getAllPhotoFromDevice(GlobalApp.context, pageSize, offset)
 
         // map UserDbEntity to User
         return@withContext list

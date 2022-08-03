@@ -30,9 +30,12 @@ class RoomViewModel : ViewModel() {
     }
 
     fun getPageRoom(): Flow<PagingData<StoredObject>> {
+        // PagingData là 1 danh sách chứa các mục dữ liệu của bạn và gọi PagingSource để tải các phần tử.
+        // PagingSource để load các item chuyển vào PagingData hiển thị lên UI.
         val loader: RoomPageLoaded = { pageIndex, pageSize ->
             getUsers(pageIndex, pageSize)
         }
+        // Pager dùng để lấy dữ liệu từ PagingSource trả về. là các item.
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
